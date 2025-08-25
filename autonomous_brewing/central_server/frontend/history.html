@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Data - Autonomous Brewing</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>📜 Historical Data (MongoDB)</h1>
+        <nav>
+            <a href="index.html">Real-Time</a>
+            <a href="history.html" class="active">Historical</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Historical Data Search</h2>
+        <div id="historical-container" class="data-container">
+             <table id="historical-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp (UTC)</th>
+                        <th>Batch ID</th>
+                        <th>Temperature (°C)</th>
+                        <th>Pressure (PSI)</th>
+                        <th>CO2 (Vol)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5">Loading data...</td></tr>
+                </tbody>
+            </table>
+            <div class="pagination" id="pagination-controls"></div>
+        </div>
+    </main>
+    <script src="static/js/history.js"></script>
+</body>
+</html>

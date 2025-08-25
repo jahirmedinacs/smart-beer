@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Cervecería Autónoma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* gray-900 */
+            color: #f3f4f6; /* gray-200 */
+        }
+        .metric-card {
+            background-color: #1f2937; /* gray-800 */
+            border: 1px solid #374151; /* gray-700 */
+        }
+        .stage-card {
+            background-color: #1f2937; /* gray-800 */
+            border-left: 4px solid #374151; /* gray-700 */
+            transition: all 0.3s ease;
+        }
+        .stage-card.active {
+            border-left-color: #34d399; /* emerald-400 */
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
+        }
+        .stage-card.completed {
+            border-left-color: #4f46e5; /* indigo-600 */
+            opacity: 0.7;
+        }
+        .progress-bar-bg {
+            background-color: #374151; /* gray-700 */
+        }
+        .progress-bar {
+            background-color: #34d399; /* emerald-400 */
+        }
+        .header-title {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white header-title">Dashboard de Cervecería Autónoma</h1>
+                <p class="text-sm text-gray-400">Lote Actual: <span id="batch-id" class="font-semibold text-emerald-400">B001-LAGER</span></p>
+            </div>
+            <div class="text-right">
+                 <p class="text-lg font-medium text-white" id="current-time">--:--:--</p>
+                 <p class="text-xs text-gray-500">Estado del Sistema: <span class="text-green-400 font-semibold">OPERATIVO</span></p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column: Process Status -->
+            <div class="lg:col-span-2 space-y-6">
+                <h2 class="text-xl font-semibold text-white">Estado del Proceso</h2>
+                <div id="process-stages" class="space-y-4">
+                    <!-- Stages will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Right Column: Live Metrics -->
+            <aside class="space-y-6">
+                <h2 class="text-xl font-semibold text-white">Métricas Actuales</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Temperature -->
+                    <div class="metric-card p-4 rounded-lg text-center">
+                        <div class="text-3xl text-red-400"><i class="fas fa-thermometer-half"></i></div>
+                        <p class="mt-2 text-gray-400 text-sm">Temperatura</p>
+                        <p id="metric-temp" class="text-2xl font-semibold text-white">--.- °C</p>
+                    </div>
+                    <!-- Pressure -->
+                    <div class="metric-card p-4 rounded-lg text-center">
+                        <div class="text-3xl text-sky-400"><i class="fas fa-compress-alt"></i></div>
+                        <p class="mt-2 text-gray-400 text-sm">Presión</p>
+                        <p id="metric-pressure" class="text-2xl font-semibold text-white">--.- PSI</p>
+                    </div>
+                    <!-- CO2 -->
+                    <div class="metric-card p-4 rounded-lg text-center">
+                        <div class="text-3xl text-gray-300"><i class="fas fa-wind"></i></div>
+                        <p class="mt-2 text-gray-400 text-sm">CO2</p>
+                        <p id="metric-co2" class="text-2xl font-semibold text-white">-.-- Vol</p>
+                    </div>
+                    <!-- Flow -->
+                    <div class="metric-card p-4 rounded-lg text-center">
+                        <div class="text-3xl text-blue-400"><i class="fas fa-water"></i></div>
+                        <p class="mt-2 text-gray-400 text-sm">Caudal</p>
+                        <p id="metric-flow" class="text-2xl font-semibold text-white">-.- L/min</p>
+                    </div>
+                </div>
+                <div class="metric-card p-4 rounded-lg">
+                    <h3 class="font-semibold mb-2 text-white">Registro de Eventos</h3>
+                    <ul id="event-log" class="text-xs text-gray-400 space-y-1 h-64 overflow-y-auto">
+                        <!-- Event logs will be added here -->
+                    </ul>
+                </div>
+            </aside>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const batchIdEl = document.getElementById('batch-id');
+            const tempEl = document.getElementById('metric-temp');
+            const pressureEl = document.getElementById('metric-pressure');
+            const co2El = document.getElementById('metric-co2');
+            const flowEl = document.getElementById('metric-flow');
+            const eventLogEl = document.getElementById('event-log');
+            const stagesContainer = document.getElementById('process-stages');
+            const timeEl = document.getElementById('current-time');
+
+            // --- Process Stages Definition ---
+            const stages = [
+                { id: 'macerado', name: 'Macerado', duration: 3600 }, // 60 mins
+                { id: 'coccion', name: 'Cocción', duration: 5400 }, // 90 mins
+                { id: 'fermentacion', name: 'Fermentación', duration: 604800 }, // 7 days
+                { id: 'carbonatacion', name: 'Carbonatación', duration: 172800 } // 2 days
+            ];
+
+            let currentStageIndex = 1; // Start with Cocción as active
+            let elapsedTimes = { macerado: 3600, coccion: 1200, fermentacion: 0, carbonatacion: 0 };
+
+            // --- Initial Render ---
+            function renderStages() {
+                stagesContainer.innerHTML = '';
+                stages.forEach((stage, index) => {
+                    const isCompleted = index < currentStageIndex;
+                    const isActive = index === currentStageIndex;
+                    
+                    const card = document.createElement('div');
+                    card.id = `stage-${stage.id}`;
+                    card.className = `stage-card p-4 rounded-lg ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`;
+                    
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-bold flex items-center">
+                                ${isCompleted ? '<i class="fas fa-check-circle text-indigo-400 mr-3"></i>' : ''}
+                                ${isActive ? '<i class="fas fa-spinner fa-spin text-emerald-400 mr-3"></i>' : ''}
+                                ${stage.name}
+                            </h3>
+                            <span class="text-xs font-mono px-2 py-1 rounded ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-700 text-gray-400'}">
+                                ${isActive ? 'EN PROGRESO' : (isCompleted ? 'COMPLETADO' : 'PENDIENTE')}
+                            </span>
+                        </div>
+                        <div class="mt-4">
+                            <div class="progress-bar-bg w-full h-2 rounded-full overflow-hidden">
+                                <div id="progress-${stage.id}" class="progress-bar h-full rounded-full" style="width: 0%;"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-400 mt-2">
+                                <span id="elapsed-${stage.id}">--:--:--</span>
+                                <span id="remaining-${stage.id}">--:--:--</span>
+                            </div>
+                        </div>
+                    `;
+                    stagesContainer.appendChild(card);
+                });
+                updateProgress();
+            }
+
+            // --- Update Functions ---
+            function formatTime(seconds) {
+                if (seconds < 0) seconds = 0;
+                const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+                const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+                const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+                return `${h}:${m}:${s}`;
+            }
+
+            function updateProgress() {
+                stages.forEach(stage => {
+                    const elapsed = elapsedTimes[stage.id];
+                    const remaining = stage.duration - elapsed;
+                    const percentage = (elapsed / stage.duration) * 100;
+
+                    document.getElementById(`progress-${stage.id}`).style.width = `${Math.min(100, percentage)}%`;
+                    document.getElementById(`elapsed-${stage.id}`).textContent = `Transcurrido: ${formatTime(elapsed)}`;
+                    document.getElementById(`remaining-${stage.id}`).textContent = `Restante: ${formatTime(remaining)}`;
+                });
+            }
+
+            function updateMetrics() {
+                // Simulate metric changes
+                tempEl.textContent = `${(90 + Math.random() * 5).toFixed(1)} °C`;
+                pressureEl.textContent = `${(14.5 + Math.random()).toFixed(1)} PSI`;
+                co2El.textContent = `${(0.8 + Math.random() * 0.2).toFixed(2)} Vol`;
+                flowEl.textContent = `${(15 + Math.random() * 2).toFixed(1)} L/min`;
+            }
+
+            function addEventLog(message) {
+                const li = document.createElement('li');
+                const time = new Date().toLocaleTimeString();
+                li.innerHTML = `<span class="text-gray-500">${time}</span> - ${message}`;
+                eventLogEl.prepend(li);
+                if (eventLogEl.children.length > 20) {
+                    eventLogEl.lastChild.remove();
+                }
+            }
+
+            function updateClock() {
+                timeEl.textContent = new Date().toLocaleTimeString('es-PE');
+            }
+
+            // --- Simulation Loop ---
+            function gameLoop() {
+                // Update active stage time
+                const activeStage = stages[currentStageIndex];
+                if (activeStage) {
+                    elapsedTimes[activeStage.id]++;
+                    if (elapsedTimes[activeStage.id] >= activeStage.duration) {
+                        elapsedTimes[activeStage.id] = activeStage.duration;
+                        addEventLog(`Etapa '<span class="font-semibold text-indigo-400">${activeStage.name}</span>' completada.`);
+                        if (currentStageIndex < stages.length - 1) {
+                            currentStageIndex++;
+                            const newActiveStage = stages[currentStageIndex];
+                            addEventLog(`Iniciando etapa '<span class="font-semibold text-emerald-400">${newActiveStage.name}</span>'.`);
+                            renderStages();
+                        } else {
+                             addEventLog(`¡Proceso de lote <span class="font-semibold text-emerald-400">${batchIdEl.textContent}</span> finalizado!`);
+                             // Stop the loop or reset
+                        }
+                    }
+                }
+                
+                updateProgress();
+                updateMetrics();
+            }
+
+            // --- Initial Setup & Intervals ---
+            renderStages();
+            addEventLog("Dashboard inicializado. Conectado al sistema.");
+            addEventLog("Recibiendo datos del lote B001-LAGER.");
+
+            setInterval(gameLoop, 1000); // Main process update
+            setInterval(updateClock, 1000); // Clock update
+        });
+    </script>
+</body>
+</html>

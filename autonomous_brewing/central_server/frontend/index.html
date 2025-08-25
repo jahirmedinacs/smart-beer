@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Monitoring - Autonomous Brewing</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>🍺 Real-Time Monitoring</h1>
+        <nav>
+            <a href="index.html" class="active">Real-Time</a>
+            <a href="history.html">Historical</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Last 20 Sensor Readings (Cache)</h2>
+        <div id="realtime-container" class="data-container">
+            <table id="realtime-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp (UTC)</th>
+                        <th>Batch ID</th>
+                        <th>Temperature (°C)</th>
+                        <th>Pressure (PSI)</th>
+                        <th>CO2 (Vol)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <script src="static/js/app.js"></script>
+</body>
+</html>
