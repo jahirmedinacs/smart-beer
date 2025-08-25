@@ -1,7 +1,8 @@
-Proyecto: Cervecería Autónoma - Sistema de Monitoreo y Control
+# Proyecto: Cervecería Autónoma - Sistema de Monitoreo y Control
+
 Este proyecto implementa un sistema para monitorear, controlar y analizar el proceso de elaboración de cerveza artesanal. La arquitectura está diseñada para ser escalable, robusta y de alta disponibilidad, permitiendo el análisis de datos en tiempo real e histórico.
 
-!(./assets/banner.png)
+![](./assets/banner.png)
 
 <br>
 
@@ -12,7 +13,7 @@ Nodos Sensores (3 por Olla): Cada nodo (Raspberry Pi) captura un conjunto de dat
 
 Servidores Centrales (2 para Redundancia): Dos Mini PCs idénticas operan en paralelo. Un balanceador de carga distribuye el tráfico de ingesta de datos entre ellas. Las bases de datos se mantienen sincronizadas constantemente mediante replicación, asegurando la integridad y disponibilidad de la información.
 
-!(./assets/diagram.svg)
+![](./assets/diagram.svg)
 
 <br>
 
@@ -103,7 +104,7 @@ frontend/:
 
 Los archivos del frontend son servidos por ambos servidores o desde un servicio de hosting estático. Las peticiones a la API deben dirigirse al balanceador de carga.
 
-!(./assets/image.png)
+![](./assets/image.png)
 
 [ESPACIO PARA CAPTURA DE PANTALLA DEL FRONTEND]
 <br>
