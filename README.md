@@ -1,6 +1,6 @@
 # Proyecto: Cervecería Autónoma - Sistema de Monitoreo y Control
 
-Este proyecto implementa un sistema para monitorear, controlar y analizar el proceso de elaboración de cerveza artesanal. La arquitectura está diseñada para ser escalable, robusta y de alta disponibilidad, permitiendo el análisis de datos en tiempo real e histórico.
+[Este proyecto](https://github.com/jahirmedinacs/smart-beer) implementa un sistema para monitorear, controlar y analizar el proceso de elaboración de cerveza artesanal. La arquitectura está diseñada para ser escalable, robusta y de alta disponibilidad, permitiendo el análisis de datos en tiempo real e histórico.
 
 ![](./assets/banner.png)
 
